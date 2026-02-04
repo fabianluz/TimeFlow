@@ -18,13 +18,13 @@ class Command(ABC):
 class CommandInvoker:
     """The History Manager (The 'Time Machine')."""
     def __init__(self):
-        self.history = [] # Stack of executed commands
+        self.history = [] 
         self.redo_stack = []
 
     def execute_command(self, command):
         command.execute()
         self.history.append(command)
-        self.redo_stack.clear() # Clear redo history on new action
+        self.redo_stack.clear() 
 
     def undo(self):
         if not self.history:
@@ -40,7 +40,7 @@ class CommandInvoker:
         command.execute()
         self.history.append(command)
 
-# --- CONCRETE COMMANDS ---
+
 
 class RotateCommand(Command):
     def __init__(self, file_path, angle):
@@ -51,7 +51,7 @@ class RotateCommand(Command):
         self._rotate(self.angle)
 
     def undo(self):
-        # For simple 90 degree rotations, mathematical undo is safe
+        
         self._rotate(-self.angle)
 
     def _rotate(self, angle):
@@ -66,10 +66,10 @@ class AutoAlignCommand(Command):
     def __init__(self, file_path):
         self.path = file_path
         self.detector = PoseDetector()
-        self.backup = None # Snapshot storage
+        self.backup = None 
 
     def execute(self):
-        # 1. Take a Snapshot BEFORE changing anything
+        
         try:
             with Image.open(self.path) as img:
                 self.backup = img.copy()
@@ -77,11 +77,11 @@ class AutoAlignCommand(Command):
             print(f"Backup failed: {e}")
             return
 
-        # 2. Calculate Angle
+        
         current_angle = self.detector.get_eye_angle(self.path)
         
         if current_angle is not None:
-            # 3. Apply Correction
+            
             correction = -current_angle
             print(f"Auto-Align: Correcting by {correction:.2f} degrees")
             self._rotate(correction)
@@ -89,7 +89,7 @@ class AutoAlignCommand(Command):
             print("Auto-Align: No eyes detected.")
 
     def undo(self):
-        # Restore the snapshot
+        
         if self.backup:
             try:
                 self.backup.save(self.path, quality=95)
@@ -99,7 +99,7 @@ class AutoAlignCommand(Command):
 
     def _rotate(self, angle):
         with Image.open(self.path) as img:
-            # expand=False keeps the image size same (important for alignment)
+            
             rotated = img.rotate(angle, expand=False, resample=Image.BICUBIC)
             rotated.save(self.path, quality=95)
 
@@ -107,10 +107,10 @@ class DeflickerCommand(Command):
     def __init__(self, active_path, reference_path):
         self.active = active_path
         self.ref = reference_path
-        self.backup = None # Snapshot storage
+        self.backup = None 
 
     def execute(self):
-        # 1. Take a Snapshot
+        
         try:
             with Image.open(self.active) as img:
                 self.backup = img.copy()
@@ -118,14 +118,14 @@ class DeflickerCommand(Command):
             print(f"Backup failed: {e}")
             return
 
-        # 2. Apply Deflicker
+        
         corrected_img = ImageProcessor.match_histograms(self.active, self.ref)
         if corrected_img:
             corrected_img.save(self.active, quality=95)
             print("Deflicker applied.")
 
     def undo(self):
-        # Restore the snapshot
+        
         if self.backup:
             try:
                 self.backup.save(self.active, quality=95)
@@ -151,7 +151,7 @@ class GenerateGapFillCommand(Command):
             if img_a.size != img_b.size:
                 img_b = img_b.resize(img_a.size, Image.Resampling.LANCZOS)
 
-            # Simple 50% opacity blend
+            
             result = Image.blend(img_a, img_b, 0.5)
 
             new_id = str(uuid.uuid4())

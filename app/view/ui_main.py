@@ -22,9 +22,9 @@ class TimeFlowWindow(QMainWindow):
         self.resize(1100, 850)
         self.setAcceptDrops(True)
         
-        # Set a cleaner base style for the whole window
+        
         self.setStyleSheet("""
-            QMainWindow { background-color: #F5F5F7; }
+            QMainWindow { background-color: 
             QWidget { font-family: 'SF Pro Display', 'Helvetica Neue', sans-serif; }
         """)
 
@@ -43,52 +43,52 @@ class TimeFlowWindow(QMainWindow):
         main_layout.setContentsMargins(30, 20, 30, 30)
         main_layout.setSpacing(20)
 
-        # --- HEADER SECTION ---
+        
         header = QHBoxLayout()
         
         title_container = QVBoxLayout()
         self.lbl_title = QLabel("Your Timeline")
-        self.lbl_title.setStyleSheet("font-size: 28px; font-weight: bold; color: #1D1D1F;")
+        self.lbl_title.setStyleSheet("font-size: 28px; font-weight: bold; color: 
         self.lbl_subtitle = QLabel("Sync your progress and create your story.")
-        self.lbl_subtitle.setStyleSheet("font-size: 14px; color: #86868B;")
+        self.lbl_subtitle.setStyleSheet("font-size: 14px; color: 
         title_container.addWidget(self.lbl_title)
         title_container.addWidget(self.lbl_subtitle)
         
         header.addLayout(title_container)
         header.addStretch()
         
-        # Dashboard Action Buttons
+        
         self.btn_export = QPushButton("Create Video")
         self.btn_export.setFixedSize(140, 40)
         self.btn_export.setStyleSheet("""
             QPushButton {
-                background-color: #0071E3; color: white; border-radius: 8px; font-weight: bold;
+                background-color: 
             }
-            QPushButton:hover { background-color: #0077ED; }
+            QPushButton:hover { background-color: 
         """)
         
         self.btn_ingest = QPushButton("+ Add Photo")
         self.btn_ingest.setFixedSize(120, 40)
         self.btn_ingest.setStyleSheet("""
             QPushButton {
-                background-color: #E8E8ED; color: #1D1D1F; border-radius: 8px; font-weight: 500;
+                background-color: 
             }
-            QPushButton:hover { background-color: #D2D2D7; }
+            QPushButton:hover { background-color: 
         """)
         
         header.addWidget(self.btn_ingest)
         header.addWidget(self.btn_export)
         main_layout.addLayout(header)
 
-        # Heatmap Container (Card Style)
+        
         heatmap_container = QFrame()
-        heatmap_container.setStyleSheet("background-color: white; border-radius: 12px; border: 1px solid #D2D2D7;")
+        heatmap_container.setStyleSheet("background-color: white; border-radius: 12px; border: 1px solid 
         heatmap_layout = QVBoxLayout(heatmap_container)
         self.heatmap = HeatmapWidget()
         heatmap_layout.addWidget(self.heatmap)
         main_layout.addWidget(heatmap_container)
 
-        # Scroll Area
+        
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QFrame.Shape.NoFrame)
@@ -103,16 +103,16 @@ class TimeFlowWindow(QMainWindow):
         self.scroll.setWidget(self.scroll_content)
         main_layout.addWidget(self.scroll)
 
-        # Progress / Status Bar
+        
         footer = QHBoxLayout()
         self.status_label = QLabel("Ready")
-        self.status_label.setStyleSheet("color: #86868B; font-size: 12px;")
+        self.status_label.setStyleSheet("color: 
         self.progress = QProgressBar()
         self.progress.setFixedSize(200, 6)
         self.progress.setTextVisible(False)
         self.progress.setStyleSheet("""
-            QProgressBar { background-color: #E8E8ED; border-radius: 3px; }
-            QProgressBar::chunk { background-color: #0071E3; border-radius: 3px; }
+            QProgressBar { background-color: 
+            QProgressBar::chunk { background-color: 
         """)
         self.progress.setVisible(False)
         
@@ -127,9 +127,9 @@ class TimeFlowWindow(QMainWindow):
         card.setStyleSheet("""
             QFrame {
                 background-color: white; border-radius: 15px; 
-                border: 1px solid #D2D2D7;
+                border: 1px solid 
             }
-            QFrame:hover { border: 2px solid #0071E3; }
+            QFrame:hover { border: 2px solid 
         """)
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(10, 10, 10, 10)
@@ -142,13 +142,13 @@ class TimeFlowWindow(QMainWindow):
         
         date_label = QLabel(date_text)
         date_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        date_label.setStyleSheet("font-size: 11px; color: #1D1D1F; font-weight: 500; border: none; margin-top: 5px;")
+        date_label.setStyleSheet("font-size: 11px; color: 
         
         card_layout.addWidget(img_label)
         card_layout.addWidget(date_label)
         self.grid_layout.addWidget(card, row, col)
 
-    # Drag and Drop events (unchanged logic)
+    
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls(): event.acceptProposedAction()
     def dragMoveEvent(self, event: QDragMoveEvent):

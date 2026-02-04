@@ -1,19 +1,19 @@
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QLabel, QFileDialog, QComboBox, 
-                             QProgressBar, QGroupBox, QCheckBox) # Added QCheckBox
+                             QProgressBar, QGroupBox, QCheckBox) 
 from PyQt6.QtCore import Qt, pyqtSignal
 
 class ExportDialog(QDialog):
-    # Updated Signal: Now includes 'split_screen' (bool)
+    
     export_requested = pyqtSignal(str, str, int, bool) 
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Export Video")
-        self.resize(500, 450) # Made slightly taller
+        self.resize(500, 450) 
         self.layout = QVBoxLayout(self)
 
-        # 1. Music Selection
+        
         grp_audio = QGroupBox("Audio Sync")
         audio_layout = QVBoxLayout()
         
@@ -26,11 +26,11 @@ class ExportDialog(QDialog):
         grp_audio.setLayout(audio_layout)
         self.layout.addWidget(grp_audio)
 
-        # 2. Video Settings
-        grp_video = QGroupBox("Video Settings")
-        video_layout = QVBoxLayout() # Changed to VBox for cleaner stacking
         
-        # Row 1: Presets
+        grp_video = QGroupBox("Video Settings")
+        video_layout = QVBoxLayout() 
+        
+        
         row_settings = QHBoxLayout()
         self.combo_preset = QComboBox()
         self.combo_preset.addItems(["TikTok/Reels (1080x1920)", "YouTube (Landscape)", "Square (Instagram)"])
@@ -43,7 +43,7 @@ class ExportDialog(QDialog):
         row_settings.addWidget(QLabel("Frame Rate:"))
         row_settings.addWidget(self.combo_fps)
         
-        # Row 2: Split Screen (NEW)
+        
         self.chk_split = QCheckBox("Split-Screen Comparison (Start vs. Now)")
         self.chk_split.setToolTip("Creates a side-by-side video: Day 1 Static (Left) vs Timelapse (Right)")
 
@@ -53,7 +53,7 @@ class ExportDialog(QDialog):
         grp_video.setLayout(video_layout)
         self.layout.addWidget(grp_video)
 
-        # 3. Progress
+        
         self.progress = QProgressBar()
         self.progress.setVisible(False)
         self.layout.addWidget(self.progress)
@@ -62,10 +62,10 @@ class ExportDialog(QDialog):
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(self.status_label)
 
-        # 4. Action Buttons
+        
         btn_layout = QHBoxLayout()
         self.btn_export = QPushButton("Render Video")
-        self.btn_export.setStyleSheet("background-color: #00E676; color: black; font-weight: bold; padding: 10px;")
+        self.btn_export.setStyleSheet("background-color: 
         self.btn_export.clicked.connect(self.on_export_click)
         
         self.btn_cancel = QPushButton("Cancel")
@@ -87,15 +87,15 @@ class ExportDialog(QDialog):
     def on_export_click(self):
         fps = int(self.combo_fps.currentText().split(" ")[0])
         preset = self.combo_preset.currentText()
-        is_split = self.chk_split.isChecked() # Get Checkbox state
+        is_split = self.chk_split.isChecked() 
         
-        # Lock UI
+        
         self.btn_export.setEnabled(False)
         self.progress.setVisible(True)
         self.progress.setValue(0)
         self.status_label.setText("Analyzing Audio...")
         
-        # Emit Signal
+        
         self.export_requested.emit(self.selected_audio_path, preset, fps, is_split)
 
     def update_progress(self, val):

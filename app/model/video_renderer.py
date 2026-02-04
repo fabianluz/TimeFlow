@@ -1,5 +1,5 @@
 import os
-# Added clips_array to imports
+
 from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip, clips_array
 from PIL import Image
 
@@ -10,7 +10,7 @@ class VideoRenderer:
         self.audio_path = audio_path
         self.beat_schedule = beat_schedule
         self.fps = fps
-        self.split_screen = split_screen # NEW
+        self.split_screen = split_screen 
         self.use_gpu = False 
 
     def render(self, progress_callback=None):
@@ -20,7 +20,7 @@ class VideoRenderer:
         if total_photos == 0: return False
 
         try:
-            # 1. Create Image Clips (The Timelapse)
+            
             for i, path in enumerate(self.photo_paths):
                 duration = 0.1 
                 
@@ -39,25 +39,25 @@ class VideoRenderer:
                 if progress_callback:
                     progress_callback(int((i / total_photos) * 40)) 
 
-            # 2. Concatenate into Main Video
+            
             main_video = concatenate_videoclips(clips, method="compose")
 
-            # --- NEW: SPLIT SCREEN LOGIC ---
+            
             final_video = main_video
             
             if self.split_screen and total_photos > 0:
-                # Create a static clip of the FIRST photo (Day 1)
-                # It must last as long as the whole video
+                
+                
                 first_photo_path = self.photo_paths[0]
                 static_start = ImageClip(first_photo_path).set_duration(main_video.duration)
                 
-                # Stack them side-by-side [Left, Right]
-                # We resize main_video to match static height just in case, 
-                # though usually they are same size in this app.
+                
+                
+                
                 final_video = clips_array([[static_start, main_video]])
-            # -------------------------------
+            
 
-            # 3. Add Audio
+            
             if self.audio_path:
                 try:
                     audio = AudioFileClip(self.audio_path)
@@ -70,7 +70,7 @@ class VideoRenderer:
                 except Exception as e:
                     print(f"Audio Merge Error: {e}")
 
-            # 4. Write File
+            
             if progress_callback: progress_callback(60)
             
             final_video.write_videofile(

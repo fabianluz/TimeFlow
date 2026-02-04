@@ -19,7 +19,7 @@ from app.controller.commands import (
     GenerateGapFillCommand
 )
 
-# --- Background Worker for Ingest ---
+
 class IngestWorker(QObject):
     finished = pyqtSignal(str, str) 
     def __init__(self, file_manager, file_path):
@@ -30,7 +30,7 @@ class IngestWorker(QObject):
         file_id, date_str = self.manager.ingest_photo(self.path)
         self.finished.emit(file_id, date_str)
 
-# --- Background Worker for Rendering (Updated) ---
+
 class RenderWorker(QObject):
     progress = pyqtSignal(int)
     finished = pyqtSignal(bool)
@@ -41,24 +41,24 @@ class RenderWorker(QObject):
         self.photos = photos
         self.audio_path = audio_path
         self.fps = fps
-        self.split_screen = split_screen # Store Flag
+        self.split_screen = split_screen 
 
     def run(self):
-        # 1. Audio Analysis
+        
         schedule = None
         if self.audio_path:
             processor = AudioProcessor()
             processor.load_audio(self.audio_path)
             schedule = processor.get_sync_schedule(len(self.photos))
 
-        # 2. Render
+        
         renderer = VideoRenderer(
             self.output_path, 
             self.photos, 
             self.audio_path, 
             schedule, 
             self.fps,
-            self.split_screen # Pass Flag
+            self.split_screen 
         )
         success = renderer.render(self.update_progress)
         self.finished.emit(success)
@@ -67,12 +67,12 @@ class RenderWorker(QObject):
         self.progress.emit(val)
 
 
-# --- Main Controller ---
+
 class AppController:
     def __init__(self, view):
         self.view = view
         
-        # Models
+        
         desktop = os.path.join(os.path.expanduser("~"), "Desktop", "TimeFlow_Project")
         self.model = FileManager(desktop)
         self.invoker = CommandInvoker()
@@ -81,13 +81,13 @@ class AppController:
         self.current_editing_id = None
         self.sorted_ids = []
 
-        # --- Dashboard Connections ---
+        
         self.view.btn_ingest.clicked.connect(self.select_file)
         self.view.files_dropped.connect(self.handle_drop)
         self.view.photo_selected.connect(self.enter_editor)
         self.view.btn_export.clicked.connect(self.open_export_dialog)
 
-        # --- Editor Connections ---
+        
         self.view.editor.back_clicked.connect(self.exit_editor)
         self.view.editor.rotate_clicked.connect(self.rotate_image)
         self.view.editor.undo_clicked.connect(self.undo_action)
@@ -97,10 +97,10 @@ class AppController:
         self.view.editor.deflicker_clicked.connect(self.run_deflicker)
         self.view.editor.gap_fill_clicked.connect(self.run_gap_fill)
 
-        # Startup
+        
         self.refresh_grid()
 
-    # --- DASHBOARD METHODS ---
+    
     def select_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self.view, "Select Photo", "", "Images (*.png *.jpg *.jpeg *.heic)")
         if file_path:
@@ -157,7 +157,7 @@ class AppController:
         
         self.view.heatmap.set_data(self.model.db["photos"])
 
-    # --- EXPORT LOGIC ---
+    
 
     def open_export_dialog(self):
         self.export_dlg = ExportDialog(self.view)
@@ -170,13 +170,13 @@ class AppController:
             self.export_dlg.btn_export.setEnabled(True)
             return
 
-        # Use Proxies for speed
+        
         photos = [os.path.join(self.model.dirs["proxies"], f"{fid}.jpg") for fid in self.sorted_ids]
         if not photos: return
 
-        # Start Background Thread
+        
         self.render_thread = QThread()
-        # Pass is_split to Worker
+        
         self.render_worker = RenderWorker(output_path, photos, audio_path, fps, is_split)
         self.render_worker.moveToThread(self.render_thread)
         
@@ -197,7 +197,7 @@ class AppController:
         else:
             QMessageBox.critical(self.view, "Error", "Video render failed. Check terminal for details.")
 
-    # --- EDITOR METHODS (Unchanged) ---
+    
     def enter_editor(self, file_id):
         self.current_editing_id = file_id
         active_path = os.path.join(self.model.dirs["proxies"], f"{file_id}.jpg")

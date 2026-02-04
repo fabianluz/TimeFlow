@@ -3,7 +3,7 @@ import cv2
 import math
 from PIL import Image
 
-# --- SAFE IMPORT BLOCK ---
+
 try:
     import mediapipe as mp
     if not hasattr(mp, 'solutions'):
@@ -17,10 +17,10 @@ class PoseDetector:
         self.face_mesh = None
         self.pose = None
         
-        # 1. Try to load AI Models
+        
         if HAS_AI:
             try:
-                # Load Face Mesh (For Auto-Align)
+                
                 self.mp_face_mesh = mp.solutions.face_mesh
                 self.face_mesh = self.mp_face_mesh.FaceMesh(
                     static_image_mode=True,
@@ -29,7 +29,7 @@ class PoseDetector:
                     min_detection_confidence=0.5
                 )
                 
-                # Load Pose (For Skeleton Guide)
+                
                 self.mp_pose = mp.solutions.pose
                 self.pose = self.mp_pose.Pose(
                     static_image_mode=True,
@@ -39,10 +39,10 @@ class PoseDetector:
             except:
                 print("⚠️ AI Init Failed. Falling back to OpenCV.")
 
-        # 2. Load OpenCV Classifiers (The Backup)
+        
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
-    # --- PHASE 3: SKELETON GUIDE (Restored) ---
+    
     def get_landmarks(self, image_path):
         """
         Returns list of (x,y) for body skeleton.
@@ -66,17 +66,17 @@ class PoseDetector:
             print(f"Skeleton AI Error: {e}")
             return None
 
-    # --- PHASE 4: AUTO-ALIGN ---
+    
     def get_eye_angle(self, image_path):
         """
         Returns angle to rotate face so eyes are horizontal.
         """
-        # Try AI First
+        
         if self.face_mesh:
             angle = self._get_angle_ai(image_path)
             if angle is not None: return angle
 
-        # Fallback to OpenCV
+        
         return self._get_angle_opencv(image_path)
 
     def _get_angle_ai(self, image_path):
@@ -90,7 +90,7 @@ class PoseDetector:
 
             lm = results.multi_face_landmarks[0].landmark
             
-            # Left Eye (33), Right Eye (263)
+            
             left_eye = (lm[33].x, lm[33].y)
             right_eye = (lm[263].x, lm[263].y)
             

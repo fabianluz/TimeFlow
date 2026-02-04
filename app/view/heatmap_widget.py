@@ -24,9 +24,9 @@ class HeatmapWidget(QWidget):
         start_x = 20
         y_pos = 30
 
-        # Colors - Apple Modern Palette
-        color_empty = QColor("#E8E8ED")
-        color_filled = QColor("#34C759") # Apple System Green
+        
+        color_empty = QColor("
+        color_filled = QColor("
 
         today = datetime.now()
         
@@ -38,9 +38,9 @@ class HeatmapWidget(QWidget):
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(start_x, y_pos, box_size, box_size, 5, 5)
 
-            # Draw day labels for start and end
+            
             if i == 29 or i == 0:
-                painter.setPen(QColor("#86868B"))
+                painter.setPen(QColor("
                 font = painter.font()
                 font.setPointSize(9)
                 painter.setFont(font)
